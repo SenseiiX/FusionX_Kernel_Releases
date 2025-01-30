@@ -1,4 +1,4 @@
-name: Kernel Build (munch) - KSUNEXT 
+name: MUNCH - KSUNEXT 
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
         required: false
       KERNEL_TREE:
         description: 'Kernel Tree'
-        default: 'https://github.com/DjSenseii1/kernel_xiaomi_sm8250'
+        default: 'https://github.com/DjSenseii1/pocof4'
         required: true
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
@@ -90,7 +90,7 @@ jobs:
         curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s next
         export ARCH=arm64
         export SUBARCH=ARM64
-        export KBUILD_BUILD_USER="aliza"
+        export KBUILD_BUILD_USER="SenseiiX"
         export KBUILD_BUILD_HOST="Github"
         make O=out vendor/munch_defconfig PATH="${{ steps.tools.outputs.tools-folder }}/clang/bin:$PATH"
         make O=out CC=clang -j$(nproc --all) PATH="${{ steps.tools.outputs.tools-folder }}/clang/bin:$PATH" CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1
@@ -113,13 +113,13 @@ jobs:
         fi
         # Check if dtb.img exists, then rename and copy it to AnyKernel3 folder
         if [ -e "dtb.img" ]; then
-          mv -f dtb.img AnyKernel3/dtb
+          cp -f dtb.img AnyKernel3/dtb
         fi
         # Check if dtbo.img exists, then copy it to AnyKernel3 folder
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=N0kernel-AOSP-KSUNEXTONlY-${{ github.event.inputs.CODENAME }}.zip
+        name=AMD-Reborn-AOSPnxt-${{ github.event.inputs.CODENAME }}.zip
         cd AnyKernel3
         zip -q -r $name *
         mv $name ../
@@ -142,9 +142,9 @@ jobs:
         fi
         # Check if dtb.img exists, then rename and copy it to SecondAnyKernel folder
         if [ -e "dtb.img" ]; then
-          mv -f dtb.img SecondAnyKernel/dtb
+          cp -f dtb.img SecondAnyKernel/dtb
         fi
-        second_name=N0kernel-HYPEROS-KSUNEXTONLY-${{ github.event.inputs.CODENAME }}.zip
+        second_name=AMD-Reborn-HYPERnxt-${{ github.event.inputs.CODENAME }}.zip
         cd SecondAnyKernel
         zip -q -r $second_name *
         mv $second_name ../

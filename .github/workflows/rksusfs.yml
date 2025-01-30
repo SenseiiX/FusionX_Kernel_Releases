@@ -21,19 +21,19 @@ on:
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
-        default: 'https://github.com/DjSenseii1/rkaosp'
+        default: 'https://github.com/DjSenseii1/AnyKernel3'
         required: false
       ANYKERNEL_BRANCH:
         description: 'AnyKernel Branch (defaults to codename)'
-        default: 'main'
+        default: 'rkaosp'
         required: false
       SECOND_ANYKERNEL_URL:
         description: 'secound AnyKernel Url (leave blank if you dont want AnyKernel)'
-        default: 'https://github.com/DjSenseii1/rkmiui'
+        default: 'https://github.com/DjSenseii1/AnyKernel3'
         required: false
       SECOND_ANYKERNEL_BRANCH:
         description: 'Second AnyKernel Branch (defaults to codename)'
-        default: 'main'
+        default: 'rkmiui'
         required: false
       UPLOAD_TO_RELEASE:
         description: 'Upload to release'
@@ -88,7 +88,7 @@ jobs:
         bash ksu.sh
         export ARCH=arm64
         export SUBARCH=ARM64
-        export KBUILD_BUILD_USER="aliza"
+        export KBUILD_BUILD_USER="SenseiiX"
         export KBUILD_BUILD_HOST="Github"
         make O=out vendor/munch_defconfig PATH="${{ steps.tools.outputs.tools-folder }}/clang/bin:$PATH"
         make O=out CC=clang -j$(nproc --all) PATH="${{ steps.tools.outputs.tools-folder }}/clang/bin:$PATH" CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1

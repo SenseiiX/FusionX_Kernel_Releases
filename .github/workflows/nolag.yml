@@ -21,19 +21,19 @@ on:
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
-        default: 'https://github.com/DjSenseii1/f4aosp'
+        default: 'https://github.com/DjSenseii1/AnyKernel3'
         required: false
       ANYKERNEL_BRANCH:
         description: 'AnyKernel Branch (defaults to codename)'
-        default: 'nolag'
+        default: 'nolagaosp'
         required: false
       SECOND_ANYKERNEL_URL:
         description: 'secound AnyKernel Url (leave blank if you dont want AnyKernel)'
-        default: 'https://github.com/DjSenseii1/miui-hyperF4'
+        default: 'https://github.com/DjSenseii1/AnyKernel3'
         required: false
       SECOND_ANYKERNEL_BRANCH:
         description: 'Second AnyKernel Branch (defaults to codename)'
-        default: 'nolag'
+        default: 'nolagmiui'
         required: false
       UPLOAD_TO_RELEASE:
         description: 'Upload to release'

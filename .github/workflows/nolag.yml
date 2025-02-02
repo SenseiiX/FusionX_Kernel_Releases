@@ -9,7 +9,7 @@ on:
         required: false
       KERNEL_TREE:
         description: 'Kernel Tree'
-        default: 'https://github.com/samuraiii06666/munch_test'
+        default: 'https://github.com/samuraiii06666/nolag_kernel'
         required: true
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'

@@ -9,12 +9,12 @@ on:
         required: false
       KERNEL_TREE:
         description: 'Kernel Tree'
-        default: 'https://github.com/samuraiii06666/nolag_kernel'
+        default: 'https://github.com/DjSenseii1/pocof4'
         required: true
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'munch'
+        default: 'nolag'
       CODENAME:
         description: 'Phone Codename'
         default: 'munch'

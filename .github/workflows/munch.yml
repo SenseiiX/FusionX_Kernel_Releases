@@ -119,9 +119,7 @@ jobs:
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=AMD-Reborn-AOSPnxt-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%H%M').zip
-        cd AnyKernel3
-        zip -q -r $name *
+        name=[AMD-Reborn+]--v1.0--Rage-AOSPnxt-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%I%M%p').zip
         mv $name ../
         echo "zipname=$name" >> $GITHUB_OUTPUT
       working-directory: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/
@@ -144,7 +142,7 @@ jobs:
         if [ -e "dtb.img" ]; then
           cp -f dtb.img SecondAnyKernel/dtb
         fi
-        second_name=AMD-Reborn-HYPERnxt-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%H%M').zip
+        second_name=[AMD-Reborn+]--v1.0--Rage-HYPERnxt-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%I%M%p').zip
         cd SecondAnyKernel
         zip -q -r $second_name *
         mv $second_name ../

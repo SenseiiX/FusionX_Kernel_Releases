@@ -120,6 +120,8 @@ jobs:
           cp -f dtbo.img AnyKernel3
         fi
         name=[AMD-Reborn+]--v1.0--Rage-AOSPnxt-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%I%M%p').zip
+        cd AnyKernel3
+        zip -q -r $name *
         mv $name ../
         echo "zipname=$name" >> $GITHUB_OUTPUT
       working-directory: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/

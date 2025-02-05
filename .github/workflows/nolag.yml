@@ -69,7 +69,7 @@ jobs:
 
     - name: Prepare the build environment
       run: |
-        sudo apt install flex && sudo apt install libncurses6
+        sudo apt install flex -y && sudo apt install libncurses6 -y
         wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O clang.tar.gz
         mkdir clang
         tar -xf clang.tar.gz -C clang

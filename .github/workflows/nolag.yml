@@ -14,7 +14,7 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'nolag'
+        default: 'n0lagtest'
       CODENAME:
         description: 'Phone Codename'
         default: 'munch'

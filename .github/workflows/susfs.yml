@@ -1,0 +1,296 @@
+name: NOLAG SUSFS
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      BUILD_TITLE:
+        description: 'Custom Build Title'
+        required: false
+      KERNEL_TREE:
+        description: 'Kernel Tree'
+        default: 'https://github.com/DjSenseii1/pocof4'
+        required: true
+      KERNEL_TREE_BRANCH:
+        description: 'Kernel Tree Branch'
+        required: true
+        default: 'nolag'
+      CODENAME:
+        description: 'Phone Codename'
+        default: 'munch'
+        required: true
+      ANYKERNEL_URL:
+        description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
+        default: 'https://github.com/DjSenseii1/AnyKernel3'
+        required: false
+      ANYKERNEL_BRANCH:
+        description: 'AnyKernel Branch (defaults to codename)'
+        default: 'nolagaosp'
+        required: false
+      UPLOAD_TO_RELEASE:
+        description: 'Upload to release'
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    if: github.event.repository.owner.id == github.event.sender.id
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Display User Inputs
+      run: |
+        echo "::group::User Environment Variables"
+        echo "Custom Build Title: ${{ github.event.inputs.BUILD_TITLE }}"
+        echo "Kernel Tree: ${{ github.event.inputs.KERNEL_TREE }}/tree/${{ github.event.inputs.KERNEL_TREE_BRANCH }}"
+        echo "Codename: ${{ github.event.inputs.CODENAME }}"
+        echo "AnyKernel Url: ${{ github.event.inputs.ANYKERNEL_URL }}/tree/${{ github.event.inputs.ANYKERNEL_BRANCH }}"
+        echo "::endgroup::"
+    - name: Initialize Git Configuration
+      run: |
+        git config --global user.name "Senseiii"
+        git config --global user.email "Elonmusk.com"
+    - name: Initialize Workspace and Install Dependencies
+      id: workspace
+      run: |
+        set -e
+        mkdir workspace
+        cd workspace
+        echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
+        echo "build_title=${{ github.event.inputs.BUILD_TITLE || github.event.inputs.CODENAME }}" >> $GITHUB_OUTPUT
+        sudo apt-get update -y -qq
+        sudo apt-get install -y --no-install-recommends python3-pip git zip unzip gcc g++ make ninja-build file bc bison flex libfl-dev libssl-dev libelf-dev wget build-essential python3-dev python3-setuptools rsync ccache llvm-dev flex libncurses6
+    - name: Cache Clang
+      uses: actions/cache@v4
+      id: cache-clang
+      with:
+        path: ${{ steps.workspace.outputs.workspace-folder }}/clang
+        key: clang-r547379-ubuntu-latest
+        restore-keys: |
+          clang-r547379-ubuntu-latest
+          clang-r547379-
+    - name: Download and Extract Clang
+      if: steps.cache-clang.outputs.cache-hit != 'true'
+      working-directory: ${{ steps.workspace.outputs.workspace-folder }}
+      run: |
+        set -e
+        echo "Downloading and extracting clang..."
+        wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O clang.tar.gz
+        mkdir clang
+        tar -xf clang.tar.gz -C clang
+        echo "Clang downloaded and extracted."
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        max-size: 2G
+
+    - name: Clone Kernel Source and SUSFS/KernelSU Repositories
+      id: kernel
+      run: |
+        set -e
+        WORKSPACE_FOLDER="${{ steps.workspace.outputs.workspace-folder }}"
+        cd "$WORKSPACE_FOLDER"
+        git clone --depth=1 ${{ github.event.inputs.KERNEL_TREE }} -b ${{ github.event.inputs.KERNEL_TREE_BRANCH }} kernel_tree
+        echo "kernel-folder=$(pwd)/kernel_tree" >> $GITHUB_OUTPUT
+        git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19 susfs4ksu
+        git clone https://github.com/WildPlusKernel/kernel_patches.git kernel_patches
+        git clone https://github.com/cabagekiller/Non-GKI-Patches.git patches_repo
+        cd kernel_tree
+        mkdir -p common/fs common/include/linux
+    - name: Apply KernelSU, SUSFS, and Other Patches
+      run: |
+        set -e
+        KERNEL_FOLDER="${{ steps.kernel.outputs.kernel-folder }}"
+        WORKSPACE_FOLDER="${{ steps.workspace.outputs.workspace-folder }}"
+        cd "$KERNEL_FOLDER"
+        # Copy SUSFS files
+        cp "$WORKSPACE_FOLDER/susfs4ksu/kernel_patches/fs/susfs.c" ./fs/
+        cp "$WORKSPACE_FOLDER/susfs4ksu/kernel_patches/include/linux/susfs.h" ./include/linux/
+        cp "$WORKSPACE_FOLDER/susfs4ksu/kernel_patches/include/linux/susfs_def.h" ./include/linux/
+        # Setup KernelSU-Next
+        echo "--- Setting up KernelSU-Next ---"
+        rm -rf KernelSU-Next
+        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s next-susfs
+        echo "--- KernelSU-Next setup complete ---"
+        # Move SUSFS KSU patch
+        SOURCE_PATH="$WORKSPACE_FOLDER/kernel_patches/KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch"
+        DESTINATION_PATH="./KernelSU-Next/"
+        mkdir -p "$DESTINATION_PATH"
+        mv "$SOURCE_PATH" "$DESTINATION_PATH"
+        # Apply KernelSU patch
+        cd KernelSU-Next
+        patch -p1 -F 3 -N < KernelSU-Next-Implement-SUSFS-v1.5.5-Universal.patch || true
+        cd ..
+        # Copy and Apply SUSFS Patch
+        cp "$WORKSPACE_FOLDER/susfs4ksu/kernel_patches/50_add_susfs_in_kernel-4.19.patch" ./50_add_susfs.patch
+        patch -p1 -F 3 -N < 50_add_susfs.patch || true
+        cd ./common
+        git add -A && git commit -a -m "BUILD Kernel" || true
+        cd ..
+        git add -A && git commit -a -m "BUILD Kernel" || true
+        git rm --cached KernelSU-Next
+        # Apply remaining patches - disable all these for now to narrow the problem scope
+        #patch -p1 -F 3 -N < selinux.c_fix.patch || true
+        #patch -p1 -F 3 -N < apk_sign.c_fix.patch || true
+        #patch -p1 --fuzz=3 -N < Makefile_fix.patch || true
+        #patch -p1 --fuzz=3 -N < core_hook.c_fix.patch || true
+        # Apply fs/Makefile and build.config.gki changes
+        sed -i '2s/check_defconfig//' ./build.config.gki
+        #sed -i '/obj-$(CONFIG_KSU_SUSFS_SUS_SU) += sus_su.o/d' ./fs/Makefile
+        # Add SUSFS configuration settings
+        cat >> ./arch/arm64/configs/vendor/munch_defconfig <<EOF
+        CONFIG_KSU=y
+        CONFIG_KSU_SUSFS=y
+        CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y
+        CONFIG_KSU_SUSFS_SUS_PATH=y
+        CONFIG_KSU_SUSFS_SUS_MOUNT=y
+        CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y
+        CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y
+        CONFIG_KSU_SUSFS_SUS_KSTAT=y
+        CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y
+        CONFIG_KSU_SUSFS_TRY_UMOUNT=y
+        CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y
+        CONFIG_KSU_SUSFS_SPOOF_UNAME=y
+        CONFIG_KSU_SUSFS_ENABLE_LOG=y
+        CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y
+        CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y
+        CONFIG_KSU_SUSFS_OPEN_REDIRECT=y
+        EOF
+        cat >> ./arch/arm64/configs/defconfig <<EOF
+        CONFIG_KSU=y
+        CONFIG_KSU_SUSFS=y
+        CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y
+        CONFIG_KSU_SUSFS_SUS_PATH=y
+        CONFIG_KSU_SUSFS_SUS_MOUNT=y
+        CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y
+        CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y
+        CONFIG_KSU_SUSFS_SUS_KSTAT=y
+        CONFIG_KSU_SUSFS_SUS_OVERLAYFS=y
+        CONFIG_KSU_SUSFS_TRY_UMOUNT=y
+        CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y
+        CONFIG_KSU_SUSFS_SPOOF_UNAME=y
+        CONFIG_KSU_SUSFS_ENABLE_LOG=y
+        CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y
+        CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y
+        CONFIG_KSU_SUSFS_OPEN_REDIRECT=y
+        EOF
+    - name: Execute patches.sh - USING WORKING-DIRECTORY - REMOVED
+      run: echo "patches.sh execution removed"
+
+    - name: Building kernel
+      id: build
+      run: |
+        set -e
+        KERNEL_FOLDER="${{ steps.kernel.outputs.kernel-folder }}"
+        TOOLS_FOLDER="${{ steps.workspace.outputs.workspace-folder }}"
+        BUILD_START_TIME=$(date +%s)
+        echo "Building kernel..."
+        export ARCH=arm64
+        export SUBARCH=arm64
+        export KBUILD_BUILD_USER="cabagekiller"
+        export KBUILD_BUILD_HOST="Github"
+        export PATH="$TOOLS_FOLDER/clang/bin:$PATH"
+        mkdir -p artifacts
+        make O=out ARCH=arm64 vendor/munch_defconfig V=1
+        make O=out CC=clang LLVM=1 LLVM_IAS=1 -j$(nproc --all) CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1
+        BUILD_END_TIME=$(date +%s)
+        BUILD_ELAPSED_TIME=$((BUILD_END_TIME - BUILD_START_TIME))
+        echo "elapsed_time=$BUILD_ELAPSED_TIME" >> $GITHUB_OUTPUT
+        echo "Kernel build finished in $BUILD_ELAPSED_TIME seconds."
+      working-directory: ${{ steps.kernel.outputs.kernel-folder }}
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: ${{ steps.kernel.outputs.kernel-folder }}/out/
+
+    - name: Prepare AnyKernel3 Zips
+      id: prepare_anykernel
+      run: |
+          set -e
+          KERNEL_FOLDER="${{ github.event.inputs.KERNEL_FOLDER }}"
+          ANYKERNEL_URL="${{ github.event.inputs.ANYKERNEL_URL }}"
+          ANYKERNEL_BRANCH="${{ github.event.inputs.ANYKERNEL_BRANCH }}"
+          ZIP_NAME_PREFIX="${{ github.event.inputs.ZIP_NAME_PREFIX }}"
+          WORKSPACE="${{ github.workspace }}"
+          OUTPUT_DIR="$KERNEL_FOLDER/out/arch/arm64/boot"
+          cd "$OUTPUT_DIR"
+          # Function to handle AnyKernel creation
+          handle_anykernel() {
+            local ak_url="$1"
+            local ak_branch="$2"
+            local ak_name_prefix="$3"
+            local zip_output_var="$4"
+            local codename="${{ github.event.inputs.CODENAME }}"
+            local workspace="${{ github.workspace }}"
+            if [[ -n "$ak_url" ]]; then
+              local ak_branch_final="${ak_branch:-$codename}"
+              local ak_folder_name="${ak_name_prefix}-AnyKernel"
+              local zip_name="${ak_name_prefix}-KSUNEXT-SUSFS-$codename.zip"
+              local zip_path="$workspace/$zip_name"
+              echo "Cloning AnyKernel3: $ak_url, branch: $ak_branch_final to $ak_folder_name"
+              git clone --recursive --depth=1 -b "$ak_branch_final" "$ak_url" "$ak_folder_name"
+              # Copy Kernel files.
+              echo "Copying kernel files to AnyKernel directory"
+              cp -f Image.gz "$ak_folder_name/" || echo "Image.gz not found."
+              if [ -f dtb.img ]; then
+                mkdir -p "$ak_folder_name/dtb"
+                mv -f dtb.img "$ak_folder_name/dtb/dtb"
+              elif [ -d dtb ]; then
+                 mv -f dtb "$ak_folder_name/"
+              else
+                echo "No dtb.img or dtb directory found"
+              fi
+              cp -f dtbo.img "$ak_folder_name/"  || echo "dtbo.img not found."
+              echo "Creating zip file: $zip_name"
+              cd "$ak_folder_name"
+              zip -q -r "$zip_path" *
+              cd ..
+              echo "::set-output name=$zip_output_var::$zip_path"
+              echo "Created $zip_name at $zip_path"
+            else
+              echo "Skipping $ak_name_prefix AnyKernel (URL not provided)."
+              echo "::set-output name=$zip_output_var::"
+            fi
+          }
+          # Ensure variables are exported
+          export -f handle_anykernel
+          # Call the function for each AnyKernel.
+          handle_anykernel "$ANYKERNEL_URL" "$ANYKERNEL_BRANCH" "${ZIP_NAME_PREFIX}-AOSP" "anykernel_zipname"
+          handle_anykernel "$ANYKERNEL_URL" "$ANYKERNEL_BRANCH" "${ZIP_NAME_PREFIX}-HYPEROS" "second_anykernel_zipname"
+    - name: Upload to Release
+      if: ${{ github.event.inputs.UPLOAD_TO_RELEASE == 'true' && (steps.prepare_anykernel.outputs.anykernel_zipname != '' || steps.prepare_anykernel.outputs.second_anykernel_zipname != '') }}
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ${{ steps.prepare_anykernel.outputs.anykernel_zipname }}
+          ${{ steps.prepare_anykernel.outputs.second_anykernel_zipname }}
+        name: ${{ github.event.inputs.CODENAME }}-${{ github.run_id }}
+        tag_name: ${{ github.run_id }}
+        body: |
+          <b>${{ steps.workspace.outputs.build_title }}</b>
+          <b>Kernel successfully built!</b>, took ${{ steps.build.outputs.elapsed_time }} seconds.
+          <b>Kernel tree</b>: ${{ github.event.inputs.KERNEL_TREE }}/tree/${{ github.event.inputs.KERNEL_TREE_BRANCH }}
+          <b>Action</b>: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Kernel Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Kernel-Artifacts
+        path: |
+          ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image.gz
+          ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtb
+          ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtbo.img
+    - name: Upload AnyKernel Artifacts (if not releasing and URLs provided)
+      if: ${{ github.event.inputs.UPLOAD_TO_RELEASE != 'true' && (github.event.inputs.ANYKERNEL_URL != '' || github.event.inputs.SECOND_ANYKERNEL_URL != '')}}
+      uses: actions/upload-artifact@v4
+      with:
+        name: AnyKernel-Artifacts
+        path: |
+          AnyKernel3-Artifacts/*AnyKernel*/
+          !AnyKernel3-Artifacts/*AnyKernel*/.git
+          !AnyKernel3-Artifacts

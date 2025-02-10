@@ -1,4 +1,4 @@
-name: N0lagKernel - KSUNEXT 
+name: N0lagKernel
 
 on:
   pull_request:

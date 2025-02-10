@@ -1,5 +1,4 @@
-name: AMD-REBORN+ - KSUNEXT 
-
+name: AMD-REBORN+
 on:
   pull_request:
   workflow_dispatch:

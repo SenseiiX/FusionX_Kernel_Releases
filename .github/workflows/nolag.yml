@@ -86,6 +86,7 @@ jobs:
 
     - name: Building kernel
       run: |
+        bash ksu.sh
         export ARCH=arm64
         export SUBARCH=ARM64
         export KBUILD_BUILD_USER="SenseiiX"

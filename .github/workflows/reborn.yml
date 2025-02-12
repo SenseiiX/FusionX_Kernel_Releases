@@ -16,7 +16,7 @@ on:
         default: 'susfs'
       CODENAME:
         description: 'Phone Codename'
-        default: 'munch'
+        default: 'test'
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'

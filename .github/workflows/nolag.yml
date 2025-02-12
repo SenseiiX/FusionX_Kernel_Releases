@@ -86,6 +86,8 @@ jobs:
 
     - name: Building kernel
       run: |
+       rm -rf KernelSU-Next
+       curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s next-susfs
         export ARCH=arm64
         export SUBARCH=ARM64
         export KBUILD_BUILD_USER="SenseiiX"

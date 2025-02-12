@@ -13,10 +13,10 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'susfs'
+        default: 'test'
       CODENAME:
         description: 'Phone Codename'
-        default: 'test'
+        default: 'munch'
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'

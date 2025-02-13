@@ -1,4 +1,4 @@
-name: N0lagKernel
+name: SUSFS
 
 on:
   pull_request:
@@ -14,10 +14,10 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'susfs'
+        default: 'nolag'
       CODENAME:
         description: 'Phone Codename'
-        default: 'munch'
+        default: 'alioth'
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
@@ -86,9 +86,12 @@ jobs:
 
     - name: Building kernel
       run: |
+        #bash ksu.sh
+        rm -rf KernelSU-Next
+        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
         export ARCH=arm64
         export SUBARCH=ARM64
-        export KBUILD_BUILD_USER="SenseiiX"
+        export KBUILD_BUILD_USER="SenseiiXD"
         export KBUILD_BUILD_HOST="Github"
         make O=out vendor/munch_defconfig PATH="${{ steps.tools.outputs.tools-folder }}/clang/bin:$PATH"
         make O=out CC=clang -j$(nproc --all) PATH="${{ steps.tools.outputs.tools-folder }}/clang/bin:$PATH" CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1
@@ -109,15 +112,16 @@ jobs:
         if [ -e "Image.gz" ]; then
           cp -f Image.gz AnyKernel3
         fi
-        # Check if dtb.img exists, then rename and copy it to AnyKernel3 folder
+        # Check if dtb.img exists, rename to dtb and copy it to AnyKernel3 folder
         if [ -e "dtb.img" ]; then
-          cp -f dtb.img AnyKernel3/dtb
+          mv -f dtb.img dtb
+          cp -f dtb AnyKernel3/dtb
         fi
         # Check if dtbo.img exists, then copy it to AnyKernel3 folder
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=N0lagKernel-[CL]-AOSP-MUNCH-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%I%M%p').zip
+        name=AOSP-TEST-${{ github.event.inputs.CODENAME }}.zip
         cd AnyKernel3
         zip -q -r $name *
         mv $name ../
@@ -138,11 +142,11 @@ jobs:
         if [ -e "Image.gz" ]; then
           cp -f Image.gz SecondAnyKernel
         fi
-        # Check if dtb.img exists, then rename and copy it to SecondAnyKernel folder
-        if [ -e "dtb.img" ]; then
-          cp -f dtb.img SecondAnyKernel/dtb
+        # Check if dtb exists, then copy it to SecondAnyKernel folder
+        if [ -e "dtb" ]; then
+          cp -f dtb SecondAnyKernel/dtb
         fi
-        second_name=N0lagKernel-[CL]-MIUI-MUNCH-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%I%M%p').zip
+        second_name=MIUI-TEST-${{ github.event.inputs.CODENAME }}.zip
         cd SecondAnyKernel
         zip -q -r $second_name *
         mv $second_name ../
@@ -167,21 +171,25 @@ jobs:
           <b>Action</b>: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
         name: Image.gz
         path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image.gz
+
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
         name: dtb
-        path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtb.img
+        path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtb
+
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
         name: dtbo.img
         path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtbo.img
+
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.ANYKERNEL_URL != '' && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
@@ -199,3 +207,4 @@ jobs:
           ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/SecondAnyKernel/
           !${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/SecondAnyKernel/.git
           !${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/SecondAnyKernel/.github
+          

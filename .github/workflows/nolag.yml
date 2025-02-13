@@ -14,10 +14,10 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'nolag'
+        default: 'susfs2'
       CODENAME:
         description: 'Phone Codename'
-        default: 'alioth'
+        default: 'munch'
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
@@ -86,10 +86,6 @@ jobs:
 
     - name: Building kernel
       run: |
-        #bash ksu.sh
-        rm -rf KernelSU-Next
-        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
-        export ARCH=arm64
         export SUBARCH=ARM64
         export KBUILD_BUILD_USER="SenseiiXD"
         export KBUILD_BUILD_HOST="Github"

@@ -118,7 +118,7 @@ jobs:
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=[AMD-Reborn+]--v1.0--Rage-AOSPnxt-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%I%M%p').zip
+        name=AMD-Reborn+[RAGE]-AOSP-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%I%M%p').zip
         cd AnyKernel3
         zip -q -r $name *
         mv $name ../
@@ -143,7 +143,7 @@ jobs:
         if [ -e "dtb.img" ]; then
           cp -f dtb.img SecondAnyKernel/dtb
         fi
-        second_name=[AMD-Reborn+]--v1.0--Rage-HYPERnxt-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%I%M%p').zip
+        second_name=AMD-Reborn+[RAGE]-MIUI-${{ github.event.inputs.CODENAME }}-$(date +'%Y%m%d-%I%M%p').zip
         cd SecondAnyKernel
         zip -q -r $second_name *
         mv $second_name ../

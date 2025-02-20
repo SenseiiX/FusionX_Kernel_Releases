@@ -1,4 +1,4 @@
-name: AMD-REBORN+
+name: AMD-REBORN+ SUSFS
 on:
   pull_request:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'new-sus'
+        default: 'main-sus'
       CODENAME:
         description: 'Phone Codename'
         default: 'munch'
@@ -85,6 +85,8 @@ jobs:
 
     - name: Building kernel
       run: |
+        rm -rf KernelSU-Next
+        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
         export ARCH=arm64
         export SUBARCH=ARM64
         export KBUILD_BUILD_USER="SenseiiX"

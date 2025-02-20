@@ -13,7 +13,7 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'munchin'
+        default: 'new-sus'
       CODENAME:
         description: 'Phone Codename'
         default: 'munch'

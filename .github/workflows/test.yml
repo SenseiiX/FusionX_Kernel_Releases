@@ -13,7 +13,7 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'main-susfs'
+        default: 'test-susfs'
       CODENAME:
         description: 'Phone Codename'
         default: 'munch'
@@ -85,8 +85,6 @@ jobs:
 
     - name: Building kernel
       run: |
-        git submodule init && git submodule update
-        bash susfs.sh
         export ARCH=arm64
         export SUBARCH=ARM64
         export KBUILD_BUILD_USER="SenseiiX"

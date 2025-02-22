@@ -1,4 +1,4 @@
-name: AMD-REBORN PERF+
+  name: MIUI/HYPEROS
 on:
   pull_request:
   workflow_dispatch:
@@ -85,6 +85,7 @@ jobs:
 
     - name: Building kernel
       run: |
+        bash nextpatch.sh
         export ARCH=arm64
         export SUBARCH=ARM64
         export KBUILD_BUILD_USER="SenseiiX"

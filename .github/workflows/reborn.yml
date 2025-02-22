@@ -27,7 +27,7 @@ on:
         default: 'amdaosp'
         required: false
       SECOND_ANYKERNEL_URL:
-        description: 'secound AnyKernel Url (leave blank if you dont want AnyKernel)'
+        description: 'Second AnyKernel Url (leave blank if you dont want AnyKernel)'
         default: 'https://github.com/DjSenseii1/AnyKernel3'
         required: false
       SECOND_ANYKERNEL_BRANCH:

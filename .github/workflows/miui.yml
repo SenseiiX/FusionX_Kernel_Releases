@@ -1,4 +1,4 @@
-  name: MIUI/HYPEROS
+name: MIUI/HYPEROS
 on:
   pull_request:
   workflow_dispatch:

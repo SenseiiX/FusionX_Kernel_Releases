@@ -1,4 +1,4 @@
-name: TEST
+name: TESTER
 on:
   pull_request:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'munchin'
+        default: 'tester'
       CODENAME:
         description: 'Phone Codename'
         default: 'munch'

@@ -16,7 +16,7 @@ on:
         default: 'tester'
       CODENAME:
         description: 'Phone Codename'
-        default: 'munch'
+        default: 'MUNCH'
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
@@ -108,7 +108,7 @@ jobs:
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=FusionX-[CL]AOSP-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
+        name=FusionX-[CL]-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
         cd AnyKernel3
         zip -q -r $name *
         mv $name ../

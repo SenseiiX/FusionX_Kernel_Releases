@@ -142,7 +142,7 @@ jobs:
         if [ -e "dtb.img" ]; then
           cp -f dtb.img SecondAnyKernel/dtb
         fi
-        name=FusionX-MIUI-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
+        second_name=FusionX-MIUI-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
         cd SecondAnyKernel
         zip -q -r $second_name *
         mv $second_name ../

@@ -13,10 +13,10 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'munch'
+        default: 'rebase'
       CODENAME:
         description: 'Phone Codename'
-        default: 'munch'
+        default: 'MUNCH'
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'

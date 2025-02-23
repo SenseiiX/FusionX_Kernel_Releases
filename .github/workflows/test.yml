@@ -76,7 +76,8 @@ jobs:
 
     - name: Building kernel
       run: |
-        bash nextpatch.sh
+        rm -rf KernelSU-Next
+        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
         export ARCH=arm64
         export SUBARCH=ARM64
         export KBUILD_BUILD_USER="SenseiiX"
@@ -108,7 +109,7 @@ jobs:
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=FusionX-[CL]-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
+        name=FusionX-[CI]-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
         cd AnyKernel3
         zip -q -r $name *
         mv $name ../

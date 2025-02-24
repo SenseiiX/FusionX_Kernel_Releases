@@ -76,7 +76,6 @@ jobs:
 
     - name: Building kernel
       run: |
-        git submodule init && git submodule update
         bash nextpatch.sh
         export ARCH=arm64
         export SUBARCH=ARM64

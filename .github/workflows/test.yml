@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       BUILD_TITLE:
-        description: 'Custom Build Title'
+        description: 'FusionX Kernel'
         required: false
       KERNEL_TREE:
         description: 'Kernel Tree'
-        default: 'https://github.com/DjSenseii1/fusionX_kernel_xiaomi_sm8250'
+        default: 'https://github.com/DjSenseii1/fusionX_sm8250'
         required: true
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'

@@ -110,7 +110,7 @@ jobs:
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=FusionX-[CI]-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
+        name=FusionX-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
         cd AnyKernel3
         zip -q -r $name *
         mv $name ../
@@ -134,25 +134,21 @@ jobs:
           <b>Action</b>: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
         name: Image.gz
         path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/Image.gz
-
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
         name: dtb
         path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtb.img
-
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
         name: dtbo.img
         path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtbo.img
-
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.ANYKERNEL_URL != '' && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:

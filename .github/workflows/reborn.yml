@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       BUILD_TITLE:
-        description: 'Custom Build Title'
+        description: 'FusionX Kernel KSU-Next'
         required: false
       KERNEL_TREE:
         description: 'Kernel Tree'

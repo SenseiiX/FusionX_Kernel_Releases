@@ -79,8 +79,7 @@ jobs:
     - name: Building kernel
       run: |
         git submodule init && git submodule update
-        rm -rf KernelSU-Next
-        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
+        bash nextpatch.sh
         export ARCH=arm64
         export SUBARCH=ARM64
         export KBUILD_BUILD_USER="SenseiiX"

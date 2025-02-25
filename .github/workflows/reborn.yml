@@ -1,4 +1,4 @@
-name: AMD-REBORN+ SUSFS
+name: FusionX Stable
 on:
   pull_request:
   workflow_dispatch:

@@ -105,7 +105,7 @@ jobs:
         fi
         # Check if dtb exists, then copy it to AnyKernel3 folder
         if [ -e "dtb" ]; then
-          cp -f dtb AnyKernel3/dtb
+          cp -f dtb AnyKernel3
         fi
         # Check if dtbo.img exists, then copy it to AnyKernel3 folder
         if [ -e "dtbo.img" ]; then

@@ -13,7 +13,7 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'kang '
+        default: 'new-rebase'
       CODENAME:
         description: 'Phone Codename'
         default: 'MUNCH'
@@ -103,9 +103,9 @@ jobs:
         if [ -e "Image.gz" ]; then
           cp -f Image.gz AnyKernel3
         fi
-        # Check if dtb.img exists, then rename and copy it to AnyKernel3 folder
-        if [ -e "dtb.img" ]; then
-          cp -f dtb.img AnyKernel3/dtb
+        # Check if dtb exists, then copy it to AnyKernel3 folder
+        if [ -e "dtb" ]; then
+          cp -f dtb AnyKernel3/dtb
         fi
         # Check if dtbo.img exists, then copy it to AnyKernel3 folder
         if [ -e "dtbo.img" ]; then

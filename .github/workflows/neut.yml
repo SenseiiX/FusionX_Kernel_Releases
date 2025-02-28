@@ -1,4 +1,4 @@
-name: KANG
+name: FusionX Netrong Clang
 on:
   pull_request:
   workflow_dispatch:
@@ -111,7 +111,7 @@ jobs:
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=FusionX-[CI]-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
+        name=FusionX-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
         cd AnyKernel3
         zip -q -r $name *
         mv $name ../

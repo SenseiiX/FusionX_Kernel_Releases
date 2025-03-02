@@ -20,11 +20,11 @@ on:
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
-        default: 'https://github.com/DjSenseii1/AnyKernel3'
+        default: 'https://github.com/SenseiiX/AnyKernel3/branches'
         required: false
       ANYKERNEL_BRANCH:
         description: 'AnyKernel Branch (defaults to codename)'
-        default: 'amdaosp'
+        default: 'fusionX'
         required: false
       UPLOAD_TO_RELEASE:
         description: 'Upload to release'

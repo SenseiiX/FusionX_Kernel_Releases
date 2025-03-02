@@ -8,23 +8,23 @@ on:
         required: false
       KERNEL_TREE:
         description: 'Kernel Tree'
-        default: 'https://github.com/DjSenseii1/fusionX_sm8250'
+        default: 'https://github.com/SenseiiX/fusionX_sm8250'
         required: true
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'main-next'
+        default: 'ksu-next'
       CODENAME:
         description: 'Phone Codename'
         default: 'munch'
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
-        default: 'https://github.com/DjSenseii1/AnyKernel3'
+        default: 'https://github.com/SenseiiiX/AnyKernel3'
         required: false
       ANYKERNEL_BRANCH:
         description: 'AnyKernel Branch (defaults to codename)'
-        default: 'amdaosp'
+        default: 'fusionX'
         required: false
       UPLOAD_TO_RELEASE:
         description: 'Upload to release'

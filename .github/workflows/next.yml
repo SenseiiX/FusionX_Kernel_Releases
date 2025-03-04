@@ -102,15 +102,15 @@ jobs:
         if [ -e "Image.gz" ]; then
           cp -f Image.gz AnyKernel3
         fi
-        # Check if dtb.img exists, then rename and copy it to AnyKernel3 folder
-        if [ -e "dtb.img" ]; then
-          cp -f dtb.img AnyKernel3/dtb
+        # Check if dtb exists, then copy it to AnyKernel3 folder
+        if [ -e "dtb" ]; then
+          cp -f dtb AnyKernel3
         fi
         # Check if dtbo.img exists, then copy it to AnyKernel3 folder
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=FusionX-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y-%m-%d-%I-%M-%p')].zip
+        name=FusionX-v1.5-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
         cd AnyKernel3
         zip -q -r $name *
         mv $name ../
@@ -143,7 +143,7 @@ jobs:
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:
         name: dtb
-        path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtb.img
+        path: ${{ steps.kernel.outputs.kernel-folder }}/out/arch/arm64/boot/dtb
     - uses: actions/upload-artifact@v4
       if: ${{ success() && github.event.inputs.UPLOAD_TO_RELEASE != 'true' }}
       with:

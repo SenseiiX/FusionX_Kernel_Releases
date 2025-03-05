@@ -1,4 +1,4 @@
-name: FusionX Stable AOSP-CLANG
+name: FusionX Stable SUSFS
 on:
   pull_request:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Debug Next
+name: TEST Next
 on:
   pull_request:
   workflow_dispatch:
@@ -24,7 +24,7 @@ on:
         required: false
       ANYKERNEL_BRANCH:
         description: 'AnyKernel Branch (defaults to codename)'
-        default: 'amdaosp'
+        default: 'fusionX'
         required: false
       UPLOAD_TO_RELEASE:
         description: 'Upload to release'
@@ -112,7 +112,7 @@ jobs:
         if [ -e "dtbo.img" ]; then
           cp -f dtbo.img AnyKernel3
         fi
-        name=FusionX-v1.5-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y%m%d-%I%M%p')].zip
+        name=FusionX-v1.5-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y-%m-%d-%I%M%p')].zip
         cd AnyKernel3
         zip -q -r $name *
         mv $name ../

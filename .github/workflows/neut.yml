@@ -1,4 +1,4 @@
-name: FusionX Netrong Clang
+name: Debug Susfs
 on:
   pull_request:
   workflow_dispatch:

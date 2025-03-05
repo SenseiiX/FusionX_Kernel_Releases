@@ -1,4 +1,4 @@
-name: KSU-NEXT ONLY
+name: FusionX Stable KSUN
 on:
   pull_request:
   workflow_dispatch:

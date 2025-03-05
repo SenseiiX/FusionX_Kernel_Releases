@@ -1,4 +1,4 @@
-name: TESTER
+name: Debug Next
 on:
   pull_request:
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'rework2'
+        default: 'ksu-next'
       CODENAME:
         description: 'Phone Codename'
         default: 'MUNCH'
@@ -79,7 +79,8 @@ jobs:
     - name: Building kernel
       run: |
         git submodule init && git submodule update
-        bash nextpatch.sh
+        rm -rf KernelSU-Next
+        curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next
         export ARCH=arm64
         export SUBARCH=ARM64
         export KBUILD_BUILD_USER="SenseiiX"

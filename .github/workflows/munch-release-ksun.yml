@@ -17,7 +17,7 @@ on:
         default: 'ksu-next'
       CODENAME:
         description: 'Phone Codename'
-        default: 'KSUN ONLY'
+        default: 'KSUN-ONLY'
         required: true
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
@@ -52,7 +52,7 @@ jobs:
         run: |
           cd kernel_tree
           git submodule init && git submodule update
-          bash next.sh
+          bash nextpatch.sh
 
       - name: Build Kernel - Original
         run: |
@@ -96,7 +96,7 @@ jobs:
         run: |
           cd kernel_tree
           git submodule init && git submodule update
-          bash next.sh
+          bash nextpatch.sh
 
       - name: Apply Modifications
         run: |
@@ -171,7 +171,7 @@ jobs:
       - name: Upload Flashable Kernel Zip
         uses: actions/upload-artifact@v4
         with:
-          name:  name=FusionX-[v1.6]-${{ github.event.inputs.CODENAME }}-${{ github.run_id }}
+          name: FusionX-[v1.6]-${{ github.event.inputs.CODENAME }}-${{ github.run_id }}
           path: |
             AnyKernel3/
             !AnyKernel3/.git

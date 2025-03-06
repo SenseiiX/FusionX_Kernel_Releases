@@ -51,7 +51,9 @@ jobs:
       - name: Apply Patches
         run: |
           cd kernel_tree
-          bash nextpatch.sh
+          git submodule init && git submodule update
+          rm -rf KernelSU-Next
+          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next
 
       - name: Build Kernel - Original
         run: |
@@ -94,7 +96,9 @@ jobs:
       - name: Apply Patches
         run: |
           cd kernel_tree
-          bash nextpatch.sh
+          git submodule init && git submodule update
+          rm -rf KernelSU-Next
+          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next
 
       - name: Apply Modifications
         run: |

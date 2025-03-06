@@ -52,8 +52,7 @@ jobs:
         run: |
           cd kernel_tree
           git submodule init && git submodule update
-          rm -rf KernelSU-Next
-          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next
+          bash next.sh
 
       - name: Build Kernel - Original
         run: |
@@ -97,8 +96,7 @@ jobs:
         run: |
           cd kernel_tree
           git submodule init && git submodule update
-          rm -rf KernelSU-Next
-          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next
+          bash next.sh
 
       - name: Apply Modifications
         run: |
@@ -165,7 +163,7 @@ jobs:
           fi
           cp dtbo-original.img AnyKernel3/munch-aosp-dtbo.img || true
           cp dtbo-modified.img AnyKernel3/munch-miui-dtbo.img || true
-          name=FusionX-[v1.5]-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y-%m-%d_%I:%M%p')].zip
+          name=FusionX-[v1.6]-${{ github.event.inputs.CODENAME }}-${{ github.run_id }}-[$(TZ='Asia/Manila' date +'%Y-%m-%d_%I:%M%p')].zip
           cd AnyKernel3
           zip -q -r $name *
           mv $name ../
@@ -173,7 +171,7 @@ jobs:
       - name: Upload Flashable Kernel Zip
         uses: actions/upload-artifact@v4
         with:
-          name: FakeDreamer-j3s-test-${{ github.event.inputs.CODENAME }}-${{ github.run_id }}
+          name:  name=FusionX-[v1.6]-${{ github.event.inputs.CODENAME }}-${{ github.run_id }}
           path: |
             AnyKernel3/
             !AnyKernel3/.git

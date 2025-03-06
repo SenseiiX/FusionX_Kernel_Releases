@@ -163,7 +163,7 @@ jobs:
           fi
           cp dtbo-original.img AnyKernel3/munch-aosp-dtbo.img || true
           cp dtbo-modified.img AnyKernel3/munch-miui-dtbo.img || true
-          name=FusionX-[v1.6]-${{ github.event.inputs.CODENAME }}-${{ github.run_id }}-[$(TZ='Asia/Manila' date +'%Y-%m-%d_%I:%M%p')].zip
+          name=FusionX-[v1.6]-${{ github.event.inputs.CODENAME }}-${{ github.run_id }}.zip
           cd AnyKernel3
           zip -q -r $name *
           mv $name ../

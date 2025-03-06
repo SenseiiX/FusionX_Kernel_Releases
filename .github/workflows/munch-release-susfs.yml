@@ -163,7 +163,7 @@ jobs:
           fi
           cp dtbo-original.img AnyKernel3/munch-aosp-dtbo.img || true
           cp dtbo-modified.img AnyKernel3/munch-miui-dtbo.img || true
-          name=FusionX-[v1.5]-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y-%m-%d_%I:%M%p')].zip
+          name=FusionX-[v1.6]-${{ github.event.inputs.CODENAME }}-${{ github.run_id }}-[$(TZ='Asia/Manila' date +'%Y-%m-%d_%I:%M%p')].zip
           cd AnyKernel3
           zip -q -r $name *
           mv $name ../
@@ -171,7 +171,7 @@ jobs:
       - name: Upload Flashable Kernel Zip
         uses: actions/upload-artifact@v4
         with:
-          name: FusionX-[v1.5]-${{ github.event.inputs.CODENAME }}-[$(TZ='Asia/Manila' date +'%Y-%m-%d_%I:%M%p')].zip
+          name:  name=FusionX-[v1.6]-${{ github.event.inputs.CODENAME }}-${{ github.run_id }}
           path: |
             AnyKernel3/
             !AnyKernel3/.git

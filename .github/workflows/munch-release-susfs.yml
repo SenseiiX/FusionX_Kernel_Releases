@@ -51,6 +51,7 @@ jobs:
       - name: Apply Patches
         run: |
           cd kernel_tree
+          git submodule init && git submodule update
           bash nextpatch.sh
 
       - name: Build Kernel - Original
@@ -94,6 +95,7 @@ jobs:
       - name: Apply Patches
         run: |
           cd kernel_tree
+          git submodule init && git submodule update
           bash nextpatch.sh
 
       - name: Apply Modifications

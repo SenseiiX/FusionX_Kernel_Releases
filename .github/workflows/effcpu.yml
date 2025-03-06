@@ -13,7 +13,7 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'main-rework'
+        default: 'experimental'
       CODENAME:
         description: 'Phone Codename'
         default: 'munch'

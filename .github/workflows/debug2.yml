@@ -31,9 +31,9 @@ on:
         default: 'https://github.com/SenseiiX/AnyKernel3'
         required: false
       ANYKERNEL_BRANCH:
-        description: 'AnyKernel Branch (defaults to codename)'
+        description: 'AnyKernel Branch'
         default: 'effcpu'
-        required: false
+        required: true
       
 jobs:
   build:
@@ -132,7 +132,7 @@ jobs:
           path: kernel-${{ matrix.kernel }}-modified
 
       - name: Clone AnyKernel3
-        run: git clone --recursive --depth=1 ${{ github.event.inputs.ANYKERNEL_URL }} -b main AnyKernel3-${{ matrix.kernel }}
+        run: git clone --recursive --depth=1 ${{ github.event.inputs.ANYKERNEL_URL }} -b ${{ github.event.inputs.ANYKERNEL_BRANCH }} AnyKernel3-${{ matrix.kernel }}
 
       - name: Move Kernel Files to AnyKernel3
         run: |

@@ -1,4 +1,4 @@
-name: Upload To Release 
+name: Upload To Release
 
 on:
   pull_request:
@@ -109,6 +109,17 @@ jobs:
             mv out/arch/arm64/boot/dtb ../munch-effcpu-dtb
           fi
           echo "kernel-folder=$(pwd)" >> $GITHUB_OUTPUT
+
+      - name: Upload Kernel Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-${{ matrix.kernel }}-${{ matrix.type }}
+          path: |
+            munch-aosp-dtbo.img
+            munch-miui-dtbo.img
+            munch-normal-dtb
+            munch-effcpu-dtb
+            Image.gz
 
   package_anykernel:
     needs: build

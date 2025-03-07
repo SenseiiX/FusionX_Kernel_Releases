@@ -1,4 +1,4 @@
-name: FusionX Release with ver
+name: FusionX Release with
 on:
   pull_request:
   workflow_dispatch:

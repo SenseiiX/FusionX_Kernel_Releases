@@ -12,7 +12,7 @@ on:
         required: true
       KERNEL_TREE_BRANCH_1:
         description: 'Kernel Tree Branch 1'
-        default: 'main-rework'
+        default: 'new-sus'
         required: true
       KERNEL_TREE_2:
         description: 'Kernel Tree 2'
@@ -20,7 +20,7 @@ on:
         required: true
       KERNEL_TREE_BRANCH_2:
         description: 'Kernel Tree Branch 2'
-        default: 'ksu-next'
+        default: 'new-next'
         required: true
       CODENAME:
         description: 'Phone Codename'

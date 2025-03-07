@@ -119,7 +119,7 @@ jobs:
           make O=out vendor/munch_defconfig
           make O=out CC=clang -j$(nproc --all) CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1
           cp out/arch/arm64/boot/Image.gz ../Image-modified.gz
-          cp out/arch/arm64/boot/dtb.img ../dtb-modified || true
+          cp out/arch/arm64/boot/dtb ../dtb-modified || true
           cp out/arch/arm64/boot/dtbo.img ../dtbo-modified.img || true
 
       - name: Upload Modified Kernel Artifacts

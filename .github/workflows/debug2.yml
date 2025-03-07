@@ -1,4 +1,4 @@
-name: ALL IN INE
+name: ALL IN ONE NEUTRON
 on:
   pull_request:
   workflow_dispatch:

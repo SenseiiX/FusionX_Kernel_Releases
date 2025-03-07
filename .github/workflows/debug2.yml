@@ -142,9 +142,9 @@ jobs:
         run: |
           COMPILED_DATE=$(date +%Y%m%d)
           if [[ "${{ matrix.kernel }}" == "1" ]]; then
-            echo "ZIP_NAME=FusionX-[v1.6]-[SUSFS]-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "ZIP_NAME=FusionX-v1.6-SUSFS-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
           else
-            echo "ZIP_NAME=FusionX-[v1.6]-[KSUN]-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "ZIP_NAME=FusionX-v1.6-KSUN-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
           fi
       
       - name: Upload Flashable Kernel Zip

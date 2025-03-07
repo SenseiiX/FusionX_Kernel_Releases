@@ -75,40 +75,40 @@ jobs:
         if: matrix.type == 'modified'
         run: |
           cd kernel_tree
-          sed -i -e '/<2553600>,/c\<2553600>;' arch/arm64/boot/dts/vendor/qcom/kona.dtsi
-          sed -i -e '/<2649600>,/c\//<2649600>,' arch/arm64/boot/dts/vendor/qcom/kona.dtsi
-          sed -i -e '/<2745600>,/c\//<2745600>,' arch/arm64/boot/dts/vendor/qcom/kona.dtsi
-          sed -i -e '/<2841600>,/c\//<2841600>,' arch/arm64/boot/dts/vendor/qcom/kona.dtsi
-          sed -i -e 's/qcom,mdss-pan-physical-width-dimension = <70>;/qcom,mdss-pan-physical-width-dimension = <700>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
-          sed -i -e 's/qcom,mdss-pan-physical-height-dimension = <155>;/qcom,mdss-pan-physical-height-dimension = <1540>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-k11a-38-08-0a-dsc-cmd.dtsi
+          sed -i '/<2553600>,/c\<2553600>;' arch/arm64/boot/dts/vendor/qcom/kona.dtsi 
+          sed -i '/<2649600>,/c\//<2649600>,' arch/arm64/boot/dts/vendor/qcom/kona.dtsi
+          sed -i '/<2745600>,/c\//<2745600>,' arch/arm64/boot/dts/vendor/qcom/kona.dtsi
+          sed -i '/<2841600>;/c\//<2841600>;' arch/arm64/boot/dts/vendor/qcom/kona.dtsi
+          sed -i 's/qcom,mdss-pan-physical-width-dimension = <70>;$/qcom,mdss-pan-physical-width-dimension = <695>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-l11r-38-08-0a-dsc-cmd.dtsi
+          sed -i 's/qcom,mdss-pan-physical-height-dimension = <155>;$/qcom,mdss-pan-physical-height-dimension = <1546>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-l11r-38-08-0a-dsc-cmd.dtsi
       
       - name: Build Kernel
         run: |
           export PATH="$(pwd)/clang/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=ARM64
-          export KBUILD_BUILD_USER="renoroi"
-          export KBUILD_BUILD_HOST="dreamstate"
+          export KBUILD_BUILD_USER="senseix"
+          export KBUILD_BUILD_HOST="telegram"
           cd kernel_tree
-          make O=out vendor/alioth_defconfig
+          make O=out vendor/munch_defconfig
           make O=out CC=clang -j$(nproc --all) CROSS_COMPILE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1
           if [[ "${{ matrix.type }}" == "original" ]]; then
-            mv out/arch/arm64/boot/dtbo.img ../alioth-aosp-dtbo.img
-            mv out/arch/arm64/boot/dtb.img ../alioth-normal-dtb
+            mv out/arch/arm64/boot/dtbo.img ../munch-aosp-dtbo.img
+            mv out/arch/arm64/boot/dtb ../munch-normal-dtb
             cp out/arch/arm64/boot/Image.gz ../Image.gz
           else
-            mv out/arch/arm64/boot/dtbo.img ../alioth-miui-dtbo.img
-            mv out/arch/arm64/boot/dtb.img ../alioth-effcpu-dtb
+            mv out/arch/arm64/boot/dtbo.img ../munch-miui-dtbo.img
+            mv out/arch/arm64/boot/dtb ../munch-effcpu-dtb
           fi
       - name: Upload Kernel Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: kernel-${{ matrix.kernel }}-${{ matrix.type }}
           path: |
-            alioth-aosp-dtbo.img
-            alioth-miui-dtbo.img
-            alioth-normal-dtb
-            alioth-effcpu-dtb
+            munch-aosp-dtbo.img
+            munch-miui-dtbo.img
+            munch-normal-dtb
+            munch-effcpu-dtb
             Image.gz
   package_anykernel:
     needs: build
@@ -139,11 +139,11 @@ jobs:
           mv kernel-${{ matrix.kernel }}-modified/* AnyKernel3-${{ matrix.kernel }}/
       - name: Define ZIP Name
         run: |
-          COMPILED_DATE=$(date +%Y%m%d)
+          COMPILED_DATE=$(TZ='Asia/Manila' date +'%Y-%m-%d_%I:%M%p')
           if [[ "${{ matrix.kernel }}" == "1" ]]; then
-            echo "ZIP_NAME=FakeDreamer-stk-test-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "ZIP_NAME=FusionX-[v1.6]-[SUSFS]-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
           else
-            echo "ZIP_NAME=FakeDreamer-j3s-test-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "ZIP_NAME=FusionX-[v1.6]-[KSUN]-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
           fi
       
       - name: Upload Flashable Kernel Zip

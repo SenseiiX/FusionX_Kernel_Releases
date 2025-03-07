@@ -1,4 +1,4 @@
-name: ALL IN INE
+name: FusionX Release 2in1
 on:
   pull_request:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
         required: true
       KERNEL_TREE_BRANCH_1:
         description: 'Kernel Tree Branch 1'
-        default: 'main-rework'
+        default: 'new-sus'
         required: true
       KERNEL_TREE_2:
         description: 'Kernel Tree 2'
@@ -20,7 +20,7 @@ on:
         required: true
       KERNEL_TREE_BRANCH_2:
         description: 'Kernel Tree Branch 2'
-        default: 'ksu-next'
+        default: 'new-next'
         required: true
       CODENAME:
         description: 'Phone Codename'
@@ -31,9 +31,9 @@ on:
         default: 'https://github.com/SenseiiX/AnyKernel3'
         required: false
       ANYKERNEL_BRANCH:
-        description: 'AnyKernel Branch (defaults to codename)'
+        description: 'AnyKernel Branch'
         default: 'effcpu'
-        required: false
+        required: true
       
 jobs:
   build:
@@ -51,7 +51,7 @@ jobs:
 
       - name: Download & Extract Clang
         run: |
-          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O clang.tar.gz
+         wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O clang.tar.gz
           mkdir clang
           tar -xf clang.tar.gz -C clang
           
@@ -131,7 +131,7 @@ jobs:
           path: kernel-${{ matrix.kernel }}-modified
 
       - name: Clone AnyKernel3
-        run: git clone --recursive --depth=1 ${{ github.event.inputs.ANYKERNEL_URL }} -b main AnyKernel3-${{ matrix.kernel }}
+        run: git clone --recursive --depth=1 ${{ github.event.inputs.ANYKERNEL_URL }} -b ${{ github.event.inputs.ANYKERNEL_BRANCH }} AnyKernel3-${{ matrix.kernel }}
 
       - name: Move Kernel Files to AnyKernel3
         run: |
@@ -139,11 +139,11 @@ jobs:
           mv kernel-${{ matrix.kernel }}-modified/* AnyKernel3-${{ matrix.kernel }}/
       - name: Define ZIP Name
         run: |
-          COMPILED_DATE=$(TZ='Asia/Manila' date +'%Y-%m-%d_%I:%M%p')
+          COMPILED_DATE=$(date +%Y%m%d)
           if [[ "${{ matrix.kernel }}" == "1" ]]; then
-            echo "ZIP_NAME=FusionX-[v1.6]-[SUSFS]-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "ZIP_NAME=FusionX-v1.6-SUSFS-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
           else
-            echo "ZIP_NAME=FusionX-[v1.6]-[KSUN]-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "ZIP_NAME=FusionX-v1.6-KSUN-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
           fi
       
       - name: Upload Flashable Kernel Zip

@@ -1,4 +1,5 @@
-name: Upload to Release 
+name: Upload To Release 
+
 on:
   pull_request:
   workflow_dispatch:
@@ -34,7 +35,11 @@ on:
         description: 'AnyKernel Branch'
         default: 'effcpu'
         required: true
-      
+      UPLOAD_TO_RELEASE:
+        description: 'Upload artifacts to a GitHub release?'
+        default: 'false'
+        required: true
+
 jobs:
   build:
     strategy:
@@ -43,18 +48,18 @@ jobs:
         type: [original, modified]
     runs-on: ubuntu-latest
     env:
-      UPLOAD_TO_RELEASE: false
+      UPLOAD_TO_RELEASE: ${{ github.event.inputs.UPLOAD_TO_RELEASE }}
 
     steps:
       - name: Install Dependencies
-        run: sudo apt install flex libncurses6
+        run: sudo apt install -y flex libncurses6 bc bison build-essential
 
       - name: Download & Extract Clang
         run: |
-         wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O clang.tar.gz
+          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O clang.tar.gz
           mkdir clang
           tar -xf clang.tar.gz -C clang
-          
+
       - name: Set Kernel Environment Variables
         run: |
           case "${{ matrix.kernel }}" in
@@ -63,6 +68,7 @@ jobs:
             2) echo "KERNEL_TREE=${{ github.event.inputs.KERNEL_TREE_2 }}" >> $GITHUB_ENV
                echo "KERNEL_TREE_BRANCH=${{ github.event.inputs.KERNEL_TREE_BRANCH_2 }}" >> $GITHUB_ENV ;;
           esac
+
       - name: Checkout Kernel
         run: git clone --depth=1 $KERNEL_TREE -b $KERNEL_TREE_BRANCH kernel_tree
 
@@ -71,6 +77,7 @@ jobs:
         run: |
           cd kernel_tree
           bash nextpatch.sh
+
       - name: Apply Modifications (if modified build)
         if: matrix.type == 'modified'
         run: |
@@ -81,8 +88,9 @@ jobs:
           sed -i '/<2841600>;/c\//<2841600>;' arch/arm64/boot/dts/vendor/qcom/kona.dtsi
           sed -i 's/qcom,mdss-pan-physical-width-dimension = <70>;$/qcom,mdss-pan-physical-width-dimension = <695>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-l11r-38-08-0a-dsc-cmd.dtsi
           sed -i 's/qcom,mdss-pan-physical-height-dimension = <155>;$/qcom,mdss-pan-physical-height-dimension = <1546>;/' arch/arm64/boot/dts/vendor/qcom/dsi-panel-l11r-38-08-0a-dsc-cmd.dtsi
-      
+
       - name: Build Kernel
+        id: build_kernel
         run: |
           export PATH="$(pwd)/clang/bin:$PATH"
           export ARCH=arm64
@@ -100,16 +108,8 @@ jobs:
             mv out/arch/arm64/boot/dtbo.img ../munch-miui-dtbo.img
             mv out/arch/arm64/boot/dtb ../munch-effcpu-dtb
           fi
-      - name: Upload Kernel Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: kernel-${{ matrix.kernel }}-${{ matrix.type }}
-          path: |
-            munch-aosp-dtbo.img
-            munch-miui-dtbo.img
-            munch-normal-dtb
-            munch-effcpu-dtb
-            Image.gz
+          echo "kernel-folder=$(pwd)" >> $GITHUB_OUTPUT
+
   package_anykernel:
     needs: build
     strategy:
@@ -137,20 +137,83 @@ jobs:
         run: |
           mv kernel-${{ matrix.kernel }}-original/* AnyKernel3-${{ matrix.kernel }}/
           mv kernel-${{ matrix.kernel }}-modified/* AnyKernel3-${{ matrix.kernel }}/
+
       - name: Define ZIP Name
+        id: define_zip
         run: |
           COMPILED_DATE=$(date +%Y%m%d)
           if [[ "${{ matrix.kernel }}" == "1" ]]; then
-            echo "ZIP_NAME=FusionX-v1.6-SUSFS-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "zipname=FusionX-v1.6-SUSFS-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE.zip" >> $GITHUB_OUTPUT
           else
-            echo "ZIP_NAME=FusionX-v1.6-KSUN-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "zipname=FusionX-v1.6-KSUN-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE.zip" >> $GITHUB_OUTPUT
           fi
-      
+
+      - name: Create Flashable Kernel Zip
+        run: |
+          cd AnyKernel3-${{ matrix.kernel }}
+          zip -r ../${{ steps.define_zip.outputs.zipname }} .
+
       - name: Upload Flashable Kernel Zip
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ZIP_NAME }}
+          name: ${{ steps.define_zip.outputs.zipname }}
+          path: ${{ steps.define_zip.outputs.zipname }}
+
+  package_source:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Kernel Source
+        run: git clone --depth=1 ${{ github.event.inputs.KERNEL_TREE_1 }} -b ${{ github.event.inputs.KERNEL_TREE_BRANCH_1 }} kernel_source
+
+      - name: Create Source Code Archive (ZIP)
+        run: |
+          cd kernel_source
+          zip -r ../kernel-source-${{ github.run_id }}.zip .
+
+      - name: Create Source Code Archive (tar.gz)
+        run: |
+          cd kernel_source
+          tar -czvf ../kernel-source-${{ github.run_id }}.tar.gz .
+
+      - name: Upload Source Code Archives
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-source
           path: |
-            AnyKernel3-${{ matrix.kernel }}/
-            !AnyKernel3-${{ matrix.kernel }}/.git
-            !AnyKernel3-${{ matrix.kernel }}/.github
+            kernel-source-${{ github.run_id }}.zip
+            kernel-source-${{ github.run_id }}.tar.gz
+
+  upload_to_release:
+    needs: [package_anykernel, package_source]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Kernel ZIPs
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Download Source Code Archives
+        uses: actions/download-artifact@v4
+        with:
+          name: kernel-source
+          path: artifacts
+
+      - name: Upload to Release
+        if: ${{ github.event.inputs.UPLOAD_TO_RELEASE == 'true' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/${{ steps.define_zip.outputs.zipname }}
+            artifacts/kernel-source-${{ github.run_id }}.zip
+            artifacts/kernel-source-${{ github.run_id }}.tar.gz
+          name: ${{ github.event.inputs.CODENAME }}-${{ github.run_id }}
+          tag_name: ${{ github.run_id }}
+          body: |
+            <b>${{ github.event.inputs.BUILD_TITLE }}</b>
+            <b>Kernel successfully built!</b>, took ${{ steps.build_kernel.outputs.elapsed_time }} seconds.
+            
+            <b>Kernel tree</b>: ${{ github.event.inputs.KERNEL_TREE }}/tree/${{ github.event.inputs.KERNEL_TREE_BRANCH }}
+            <b>Action</b>: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

@@ -140,7 +140,7 @@ jobs:
           mv kernel-${{ matrix.kernel }}-modified/* AnyKernel3-${{ matrix.kernel }}/
       - name: Define ZIP Name
         run: |
-          COMPILED_DATE=$(TZ='Asia/Manila' date +'%Y-%m-%d_%I:%M%p')
+          COMPILED_DATE=$(date +%Y%m%d)
           if [[ "${{ matrix.kernel }}" == "1" ]]; then
             echo "ZIP_NAME=FusionX-[v1.6]-[SUSFS]-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
           else

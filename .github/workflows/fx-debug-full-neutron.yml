@@ -1,4 +1,4 @@
-name: FusionX-debug-full
+name: FusionX-Debug-Neutron
 on:
   pull_request:
   workflow_dispatch:
@@ -25,7 +25,7 @@ on:
       CODENAME:
         description: 'Phone Codename'
         default: 'MUNCH'
-        required: true
+        required: false
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
         default: 'https://github.com/SenseiiX/AnyKernel3'
@@ -55,9 +55,10 @@ jobs:
 
       - name: Download & Extract Clang
         run: |
-          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O clang.tar.gz
+          wget https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/10032024/neutron-clang-10032024.tar.zst -O clang.tar.zst
           mkdir clang
-          tar -xf clang.tar.gz -C clang
+          unzstd -d clang.tar.zst
+          tar -xf clang.tar -C clang
           
       - name: Set Kernel Environment Variables
         run: |
@@ -70,13 +71,13 @@ jobs:
 
       - name: Checkout Kernel
         run: git clone --depth=1 $KERNEL_TREE -b $KERNEL_TREE_BRANCH kernel_tree
-        
-      - name: Download & Extract Clang
+
+      - name: Kernel Version
         run: |
-         wget https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/10032024/neutron-clang-10032024.tar.zst -O clang.tar.zst
-          mkdir clang
-          unzstd -d clang.tar.zst
-          tar -xf clang.tar -C clang
+          cd kernel_tree
+          if [[ "${{ github.event.inputs.CUSTOM_SED }}" != "-FusionX" ]]; then
+            sed -i -e 's/CONFIG_LOCALVERSION="-FusionX"/CONFIG_LOCALVERSION="${{ github.event.inputs.CUSTOM_SED }}"/' arch/arm64/configs/vendor/munch_defconfig
+          fi
 
       - name: Apply Patches
         if: matrix.kernel

@@ -1,6 +1,5 @@
 name: Dispatcher Workflow
- 
- on:
+on:
    workflow_dispatch:
      inputs:
        UPLOAD_TO_RELEASE:
@@ -11,8 +10,7 @@ name: Dispatcher Workflow
          description: 'FusionX-Final-Release'
          required: false
       
- 
- jobs:
+jobs:
    trigger-workflows:
      runs-on: ubuntu-latest
      steps:

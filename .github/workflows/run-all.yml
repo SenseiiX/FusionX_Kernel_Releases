@@ -1,68 +1,38 @@
 name: Dispatcher Workflow
-
-on:
-  workflow_dispatch:
-    inputs:
-      UPLOAD_TO_RELEASE:
-        description: 'Upload to release for all workflows'
-        type: boolean
-        default: false
-      BUILD_TITLE_MUNCH:
-        description: 'FusionX-Final-Release'
-        required: false
-
-jobs:
-  trigger-workflows:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger FusionX-Final-Release Workflow
-        uses: actions/github-script@v6
-        with:
-          script: |
-            try {
-              await github.rest.actions.createWorkflowDispatch({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                workflow_id: 'fx-release-stable-full.yml',
-                ref: 'master',  // Replace 'main' with the correct branch or tag
-                inputs: {
-                  BUILD_TITLE: '${{ github.event.inputs.BUILD_TITLE_MUNCH }}',
-                  UPLOAD_TO_RELEASE: '${{ github.event.inputs.UPLOAD_TO_RELEASE }}',
-                },
-              });
-              console.log('Successfully triggered FusionX-Final-Release');
-            } catch (error) {
-              console.error('Error triggering FusionX-Final-Release:', error);
-              throw error;
-            }
-
-  upload-to-release:
-    runs-on: ubuntu-latest
-    needs: trigger-workflows
-    if: ${{ github.event.inputs.UPLOAD_TO_RELEASE == true }}  # Only run if UPLOAD_TO_RELEASE is true
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: build-artifact  # Replace with the name of the artifact created in the build workflow
-          path: ./artifact
-
-      - name: Create Release
-        id: create-release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: ./artifact/build-output.zip  # Replace with the path to the artifact
-          asset_name: build-output.zip            # Replace with the name of the asset
-          asset_content_type: application/zip
+ 
+ on:
+   workflow_dispatch:
+     inputs:
+       UPLOAD_TO_RELEASE:
+         description: 'Upload to release for all workflows'
+         type: boolean
+         default: false
+       BUILD_TITLE_MUNCH:
+         description: 'FusionX-Final-Release'
+         required: false
+      
+ 
+ jobs:
+   trigger-workflows:
+     runs-on: ubuntu-latest
+     steps:
+       - name: FusionX-Final-Release
+         uses: actions/github-script@v6
+         with:
+           script: |
+             try {
+               await github.rest.actions.createWorkflowDispatch({
+                 owner: context.repo.owner,
+                 repo: context.repo.repo,
+                 workflow_id: 'fx-release-stable-full.yml',
+                 ref: 'master',
+                 inputs: {
+                   BUILD_TITLE: '${{ github.event.inputs. BUILD_TITLE_MUNCH }}',
+                   UPLOAD_TO_RELEASE: ${{ github.event.inputs.UPLOAD_TO_RELEASE }},
+                 },
+               });
+               console.log('Successfully triggered FusionX-Final-Release');
+             } catch (error) {
+               console.error('Error triggering FusionX-Final-Release:', error);
+               throw error;
+             }

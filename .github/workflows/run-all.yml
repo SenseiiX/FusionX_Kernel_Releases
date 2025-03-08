@@ -24,10 +24,10 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 workflow_id: 'fx-release-stable-full.yml',
-                ref: 'main',  # Replace 'main' with the correct branch or tag
+                ref: 'master',  // Replace 'main' with the correct branch or tag
                 inputs: {
                   BUILD_TITLE: '${{ github.event.inputs.BUILD_TITLE_MUNCH }}',
-                  UPLOAD_TO_RELEASE: ${{ github.event.inputs.UPLOAD_TO_RELEASE }},
+                  UPLOAD_TO_RELEASE: '${{ github.event.inputs.UPLOAD_TO_RELEASE }}',
                 },
               });
               console.log('Successfully triggered FusionX-Final-Release');
@@ -64,5 +64,5 @@ jobs:
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: ./artifact/build-output.zip  # Replace with the path to the artifact
-          asset_name: build-output.zip              # Replace with the name of the asset
+          asset_name: build-output.zip            # Replace with the name of the asset
           asset_content_type: application/zip

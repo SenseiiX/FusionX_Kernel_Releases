@@ -60,9 +60,10 @@ jobs:
     - name: Prepare the build environment
       run: |
         sudo apt install flex && sudo apt install libncurses6
-        wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O clang.tar.gz
-        mkdir clang
-        tar -xf clang.tar.gz -C clang
+        wget https://github.com/Neutron-Toolchains/clang-build-catalogue/releases/download/10032024/neutron-clang-10032024.tar.zst -O clang.tar.zst
+          mkdir clang
+          unzstd -d clang.tar.zst
+          tar -xf clang.tar -C clang
         echo "tools-folder=$(pwd)" >> $GITHUB_OUTPUT
       working-directory: ${{ steps.workspace.outputs.workspace-folder }}
       id: tools

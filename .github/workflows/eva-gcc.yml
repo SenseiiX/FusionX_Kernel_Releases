@@ -55,9 +55,8 @@ jobs:
 
       - name: Download & Extract Eva GCC
         run: |
-          wget https://github.com/mvaisakh/gcc-arm64/archive/refs/heads/master.zip -O eva_gcc.zip
+          wget https://github.com/mvaisakh/gcc-arm64/releases/download/v1.0/gcc-arm64-v1.0.zip -O eva_gcc.zip
           unzip eva_gcc.zip -d eva_gcc
-          mv eva_gcc/gcc-arm64-master eva_gcc/gcc
 
       - name: Debug Eva GCC Directory
         run: |
@@ -101,14 +100,14 @@ jobs:
       
       - name: Build Kernel
         run: |
-          export PATH="$(pwd)/eva_gcc/gcc/bin:$PATH"
+          export PATH="$(pwd)/eva_gcc/bin:$PATH"
           export ARCH=arm64
           export SUBARCH=ARM64
           export KBUILD_BUILD_USER="senseix"
           export KBUILD_BUILD_HOST="telegram"
           cd kernel_tree
           make O=out vendor/munch_defconfig
-          make O=out CC=gcc -j$(nproc --all) CROSS_COMPILE=aarch64-linux-gnu-
+          make O=out CC=gcc -j$(nproc --all) CROSS_COMPILE=aarch64-elf- LLVM=0
           if [[ "${{ matrix.type }}" == "original" ]]; then
             mv out/arch/arm64/boot/dtbo.img ../munch-aosp-dtbo.img
             mv out/arch/arm64/boot/dtb ../munch-normal-dtb

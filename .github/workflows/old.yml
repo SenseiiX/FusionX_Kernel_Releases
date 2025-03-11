@@ -12,7 +12,7 @@ on:
         required: true
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
-        required: true
+        required: false
         default: 'munch'
       CODENAME:
         description: 'Phone Codename'

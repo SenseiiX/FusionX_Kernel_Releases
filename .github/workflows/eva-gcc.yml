@@ -51,13 +51,17 @@ jobs:
 
     steps:
       - name: Install Dependencies
-        run: sudo apt install flex libncurses6
+        run: sudo apt install flex libncurses6 unzip wget
 
-            - name: Download & Extract Eva GCC
+      - name: Download & Extract Eva GCC
         run: |
           wget https://github.com/mvaisakh/gcc-arm64/archive/refs/heads/master.zip -O eva_gcc.zip
           unzip eva_gcc.zip -d eva_gcc
           mv eva_gcc/gcc-arm64-master eva_gcc/gcc
+
+      - name: Debug Eva GCC Directory
+        run: |
+          ls -R eva_gcc
 
       - name: Set Kernel Environment Variables
         run: |

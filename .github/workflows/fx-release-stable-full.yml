@@ -22,9 +22,9 @@ on:
         description: 'Kernel Tree Branch 2'
         default: 'main-next'
         required: true
-      CODENAME:
-        description: 'Phone Codename'
-        default: 'MUNCH'
+      VERSION:
+        description: 'Kernel Version'
+        default: '1.xxx'
         required: false
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
@@ -157,9 +157,9 @@ jobs:
         run: |
           COMPILED_DATE=$(date +%Y%m%d)
           if [[ "${{ matrix.kernel }}" == "1" ]]; then
-            echo "ZIP_NAME=FusionX-SUSFS-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "ZIP_NAME=FusionX-SUSFS-${{ github.event.inputs.VERSION }}-$COMPILED_DATE" >> $GITHUB_ENV
           else
-            echo "ZIP_NAME=FusionX-NEXT-${{ github.event.inputs.CODENAME }}-$COMPILED_DATE" >> $GITHUB_ENV
+            echo "ZIP_NAME=FusionX-NEXT-${{ github.event.inputs.VERSION }}-$COMPILED_DATE" >> $GITHUB_ENV
           fi
       
       - name: Upload Flashable Kernel Zip

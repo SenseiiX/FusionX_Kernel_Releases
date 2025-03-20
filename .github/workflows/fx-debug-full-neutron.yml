@@ -12,8 +12,8 @@ on:
         required: true
       KERNEL_TREE_BRANCH_1:
         description: 'Kernel Tree Branch 1'
-        required: false
         default: 'test-sus'
+        required: false
         type: choice
         options:
           - munch-sus
@@ -24,14 +24,14 @@ on:
         required: true
       KERNEL_TREE_BRANCH_2:
         description: 'Kernel Tree Branch 2'
-        required: false
         default: 'test-next'
+        required: false
         type: choice
         options:
           - munch-next
           - test-next
       VERSION:
-        description: 'Kernel Version'
+        description: 'Zip Version'
         default: '1.xxx'
         required: false
       ANYKERNEL_URL:

@@ -16,6 +16,7 @@ on:
         type: choice
         options:
           - munch-sus
+          - test-sus
       KERNEL_TREE_2:
         description: 'Kernel Tree 2'
         default: 'https://github.com/SenseiiX/fusionX_sm8250'
@@ -26,6 +27,7 @@ on:
         type: choice
         options:
           - munch-next
+          - test-next
       VERSION:
         description: 'Kernel Version'
         default: '1.xxx'

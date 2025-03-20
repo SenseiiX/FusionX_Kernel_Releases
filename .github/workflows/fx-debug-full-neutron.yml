@@ -13,7 +13,8 @@ on:
       KERNEL_TREE_BRANCH_1:
         description: 'Kernel Tree Branch 1'
         required: false
-        default: 'none'
+        default: 'test-sus'
+        type: choice
         options:
           - munch-sus
           - test-sus
@@ -24,7 +25,7 @@ on:
       KERNEL_TREE_BRANCH_2:
         description: 'Kernel Tree Branch 2'
         required: false
-        default: 'none'
+        default: 'test-next'
         type: choice
         options:
           - munch-next

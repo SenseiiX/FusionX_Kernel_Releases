@@ -12,19 +12,26 @@ on:
         required: true
       KERNEL_TREE_BRANCH_1:
         description: 'Kernel Tree Branch 1'
-        default: 'main-sus'
-        required: true
+        required: false
+        default: 'none'
+        options:
+          - munch-sus
+          - test-sus
       KERNEL_TREE_2:
         description: 'Kernel Tree 2'
         default: 'https://github.com/SenseiiX/fusionX_sm8250'
         required: true
       KERNEL_TREE_BRANCH_2:
         description: 'Kernel Tree Branch 2'
-        default: 'main-next'
-        required: true
-      CODENAME:
-        description: 'Phone Codename'
-        default: 'MUNCH'
+        required: false
+        default: 'none'
+        type: choice
+        options:
+          - munch-next
+          - test-next
+      VERSION:
+        description: 'Kernel Version'
+        default: '1.xxx'
         required: false
       ANYKERNEL_URL:
         description: 'AnyKernel Url (leave blank if you dont want AnyKernel)'
@@ -38,6 +45,7 @@ on:
         description: 'Custom Kernel Version'
         default: '-FusionX'
         required: false
+
 
 jobs:
   build:

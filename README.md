@@ -1,4 +1,4 @@
-![Tech Company Presentation](https://github.com/SenseiiX/SenseiiX/blob/main/fusionx.png?raw=true)
+![Tech Company Presentation](https://raw.githubusercontent.com/SenseiiX/FusionX_Kernel_Releases/master/FusionX.png)
 
 # FusionX Kernel for POCO F4 (munch)
 > ✅ **Supports MIUI / HyperOS / AOSP / LOS / CLO**
@@ -14,12 +14,11 @@ Custom & optimized kernel for POCO F4 / Redmi K40S based on latest Linux, Google
 
 ## 🚀 Key Features
 - **Wide range of KSU based manager support**: 
-    - OG KSU, SukiSU Ultra, KSU-Next, MkSU, RkSU, backlashxx's fork
+    - OG KSU, SukiSU Ultra, KSU-Next, MkSU, RkSU, Wild-KSU, backlashxx's fork
 - **SUSFS Integration**: Enhanced root hiding capability
 - **Display Enhancements**: Includes **DC Dimming** and **High Brightness Mode (HBM)**
 - **Sched Boost Tunableses**: Customizable performance curve
 - **Hiding Capabilities**: Better zygisk hiding and faked all lineage symlinks
-- **Bypass Charging**: Extend battery life during gaming or long usage
 - **Smart Installer**: Dual-mode installer supporting:
   - Auto-detects ROM/CPU type via zipname (for adb sideload, recoveries or kernel flashers)
   - Manual selection with volume keys (for adb sideload, recoveries or kernel flashers)
@@ -28,12 +27,17 @@ Custom & optimized kernel for POCO F4 / Redmi K40S based on latest Linux, Google
 
 ## 📦 Available Variants
 
-**NEXT**
-- Modern root solution
+**NOKSU**
 - Light, clean, and simple
+- Perfect for users who don't need root access
 - Focus on stability and performance
 
+**NEXT**
+- Modern root solution 
+- Equipped with KernelSU Next and other managers
+
 **NEXT + SUSFS**
+- Equipped with KernelSU Next and other managers
 - Adds SUSFS root hiding system
 - Ideal for apps/games with root detection (banking, anti-cheat)
 - Heavier, but more secure
@@ -56,7 +60,6 @@ Custom & optimized kernel for POCO F4 / Redmi K40S based on latest Linux, Google
 | ROM Type           | Filename Example                |
 |--------------------|----------------------------------|
 | MIUI / HyperOS     | FusionX-vX.X-`MIUI`.zip         |
-| AOSP w/ LOS IR     | FusionX-vX.X-`IR`.zip           |
 | AOSP (standard)    | FusionX-vX.X-`AOSP`.zip              |
 
 
@@ -67,6 +70,17 @@ Custom & optimized kernel for POCO F4 / Redmi K40S based on latest Linux, Google
 | MAX   | Prime core freq = `3.2 GHz`         | FusionX-vX.X-ROM-.zip (blank)      |
 | BALANCE   | Prime core freq = `2.8 GHz`         | FusionX-vX.X-ROM-`BAL`.zip       |
 | EFFICIENT   | Prime core freq = `2.5 GHz`         | FusionX-vX.X-ROM-`EFF`.zip       |
+
+- The installer also detects your GPU frequency:
+
+| GPU Type         | Detection Method                     | Example Filename                |
+|------------------|--------------------------------------|----------------------------------|
+| STOCK   | GPU freq = `670-305 MHz`         | FusionX-vX.X-ROM-.zip (blank)      |
+| UV   | GPU freq = `670-150 MHz`         | FusionX-vX.X-ROM-`UV`.zip       |
+| OC + UV   | GPU freq = `683-150 MHz`         | FusionX-vX.X-ROM-`OCUV`.zip       |
+
+
+
 
 Just flash normally in your custom recovery.
 
@@ -115,3 +129,5 @@ This project uses GPL v2 license in accordance with the Linux kernel.
 ---
 
 **If this kernel is useful for you, don't forget to give a ⭐ star to this [repository!](https://github.com/SenseiiX/fusionX_sm8250)**
+
+
